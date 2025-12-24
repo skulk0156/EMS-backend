@@ -1,0 +1,24 @@
+import mongoose from "mongoose";
+
+const teamSchema = new mongoose.Schema(
+  {
+    team_name: { type: String, required: true },
+
+    // The manager (team leader)
+    team_leader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+
+    // Members list
+    members: [
+      {
+        employee: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+      }
+    ]
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Team", teamSchema);
