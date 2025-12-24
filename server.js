@@ -7,6 +7,8 @@ import teamRoutes from './routes/teamRoutes.js';
 import dashboardRoute from './routes/dashboardRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import taskRoutes from './routes/tasks.Routes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
+
 
 dotenv.config();
 const app = express();
@@ -19,6 +21,9 @@ app.use("/api/users", userRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/dashboard', dashboardRoute);
 app.use('/api/projects', projectRoutes);
+app.use('/api/attendance', attendanceRoutes);
+
+
 
 
 mongoose
