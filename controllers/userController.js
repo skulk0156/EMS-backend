@@ -162,15 +162,14 @@ export const getUserById = async (req, res) => {
 
 
 // ---------------- Update User ----------------
-// ---------------- Update User ----------------
 export const updateUser = async (req, res) => {
-  const { id } = req.params;
+  const { employeeId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id))
+  if (!mongoose.Types.ObjectId.isValid(employeeId))
     return res.status(400).json({ message: "Invalid ID" });
 
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(employeeId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     // Delete old image if a new one is uploaded
