@@ -1,30 +1,82 @@
+// import express from "express";
+// import mongoose from "mongoose";
+// import dotenv from "dotenv";
+// import cors from "cors";
+// import userRoutes from "./routes/userRoutes.js";
+// import teamRoutes from './routes/teamRoutes.js';
+// import dashboardRoute from './routes/dashboardRoutes.js';
+// import projectRoutes from './routes/projectRoutes.js';
+// import taskRoutes from './routes/tasks.Routes.js';
+
+// dotenv.config();
+// const app = express();
+
+// app.use(cors());
+// app.use(express.json());
+
+// // ✅ Mount all user routes
+// app.use("/api/users", userRoutes);
+// app.use('/api/teams', teamRoutes);
+// app.use('/api/dashboard', dashboardRoute);
+// app.use('/api/projects', projectRoutes);
+
+
+// mongoose
+//   .connect(process.env.MONGO_URI)
+//   .then(() => console.log("Your Dababase is Connected to your Server ✅"))
+//   .catch((err) => console.error("❌ MongoDB Error:", err));
+
+// const PORT = process.env.PORT || 5000;
+// app.listen(PORT, () => console.log(`🚀 Server running on port http://localhost:${PORT} Congratulations`));
+
+
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-import userRoutes from "./routes/userRoutes.js";
-import teamRoutes from './routes/teamRoutes.js';
-import dashboardRoute from './routes/dashboardRoutes.js';
-import projectRoutes from './routes/projectRoutes.js';
-import taskRoutes from './routes/tasks.Routes.js';
 
+// Routes
+import userRoutes from "./routes/userRoutes.js";
+import teamRoutes from "./routes/teamRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import taskRoutes from "./routes/tasks.Routes.js";
+
+// Load env variables
 dotenv.config();
+
 const app = express();
 
+/* ---------------- MIDDLEWARE ---------------- */
 app.use(cors());
 app.use(express.json());
 
-// ✅ Mount all user routes
+/* ---------------- ROUTES ---------------- */
 app.use("/api/users", userRoutes);
-app.use('/api/teams', teamRoutes);
-app.use('/api/dashboard', dashboardRoute);
-app.use('/api/projects', projectRoutes);
+app.use("/api/teams", teamRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/tasks", taskRoutes);
 
+/* ---------------- ROOT CHECK ---------------- */
+app.get("/", (req, res) => {
+  res.send("🚀 EMS Backend API is running successfully");
+});
 
+/* ---------------- DATABASE ---------------- */
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("Your Dababase is Connected to your Server ✅"))
-  .catch((err) => console.error("❌ MongoDB Error:", err));
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err.message);
+    process.exit(1);
+  });
 
+/* ---------------- SERVER ---------------- */
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port http://localhost:${PORT} Congratulations`));
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
