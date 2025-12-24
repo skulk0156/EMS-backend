@@ -162,6 +162,7 @@ export const getUserById = async (req, res) => {
 
 
 // ---------------- Update User ----------------
+// ---------------- Update User ----------------
 export const updateUser = async (req, res) => {
   const { id } = req.params;
 
@@ -172,17 +173,49 @@ export const updateUser = async (req, res) => {
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Delete old image
+    // Delete old image if a new one is uploaded
     if (req.file && user.profileImage && fs.existsSync(user.profileImage)) {
       fs.unlinkSync(user.profileImage);
     }
 
-    const updatedData = { ...req.body };
-    if (req.file) updatedData.profileImage = `uploads/${req.file.filename}`;
+    // Define all updatable fields
+    const updatableFields = [
+      'employeeId',
+      'name',
+      'email',
+      'role',
+      'password',
+      'department',
+      'designation',
+      'location',
+      'address',
+      'phone',
+      'dob',
+      'gender',
+      'joining_date'
+    ];
+
+    // Create updatedData object with only the fields that are provided in the request
+    const updatedData = {};
+    updatableFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        // Special handling for password field
+        if (field === 'password') {
+          updatedData[field] = bcrypt.hashSync(req.body[field], 10);
+        } else {
+          updatedData[field] = req.body[field];
+        }
+      }
+    });
+
+    // Update profile image if a new one is uploaded
+    if (req.file) {
+      updatedData.profileImage = `uploads/${req.file.filename}`;
+    }
 
     const updatedUser = await User.findByIdAndUpdate(id, updatedData, {
       new: true,
-    });
+    }).select("-password"); // Don't return the password
 
     res.json({ message: "User updated", user: updatedUser });
   } catch (err) {
@@ -190,7 +223,6 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 // ---------------- Delete User ----------------
 export const deleteUser = async (req, res) => {
